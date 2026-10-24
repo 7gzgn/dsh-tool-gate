@@ -1,0 +1,9 @@
+# dsh-tool-gate bundle patch：把自己插进 profile 的插件名单
+- insert:
+    - id: plugin-tool-gate
+      name: 'dsh-tool-gate'
+      config:
+        parked:
+          - browser
+          - wincu
+          - ig5
