@@ -1,4 +1,4 @@
-# dsh-tool-gate
+# dsh-ctx-gate
 
 把整包工具从会话的工具面上摘下来，要用时一条命令挂回去。
 
@@ -20,23 +20,23 @@
 
 ```jsonc
 // 1. ~/.dsh/profiles/<你的 profile>/package.json 的 dependencies
-"dsh-tool-gate": "link:<本地工程绝对路径>",
+"dsh-ctx-gate": "link:<本地工程绝对路径>",
 
 // 2. 同一个文件的 dsh.profile.bundles 数组里加一行
-"dsh-tool-gate"
+"dsh-ctx-gate"
 ```
 
 ```powershell
 # 3. 建 junction（或 pnpm install），然后重启宿主
 New-Item -ItemType Junction `
-  -Path "$HOME\.dsh\profiles\<profile>\node_modules\dsh-tool-gate" `
+  -Path "$HOME\.dsh\profiles\<profile>\node_modules\dsh-ctx-gate" `
   -Target "<本地工程绝对路径>"
 ```
 
 装了不生效的排查顺序（血泪）：
 
 1. 先看工具表里有没有 `tool_gate`。没有就往下。
-2. 设 `DSH_TOOL_GATE_DEBUG=1` 再重启，会在工作目录生成 `dsh-tool-gate-debug.log`。
+2. 设 `DSH_TOOL_GATE_DEBUG=1` 再重启，会在工作目录生成 `dsh-ctx-gate-debug.log`。
    - **没有这个文件** → profile 根本没加载这个包，回去查上面三步。
    - 有 `constructed` 没有 `inject callback` → `ctx.inject` 没触发，tools 服务没就绪。
    - 有 `register ok` 但工具不在 → 查 agent 作用域。
@@ -57,7 +57,7 @@ tool_gate(action: "mount", groups: ["browser"])   # 只挂浏览器
 
 ```yaml
 - id: plugin-tool-gate
-  name: 'dsh-tool-gate'
+  name: 'dsh-ctx-gate'
   config:
     # 默认收着哪些组；清空 = 默认全挂出来
     parked: [browser, wincu, ig5]
@@ -103,7 +103,7 @@ tool_gate(action: "mount", groups: ["browser"])   # 只挂浏览器
 ## 回滚
 
 - 让工具回来：`tool_gate(action: "mount")`，立刻。
-- 停用插件：把 `dsh-tool-gate` 从 `dsh.profile.bundles` 里删掉，重启。
+- 停用插件：把 `dsh-ctx-gate` 从 `dsh.profile.bundles` 里删掉，重启。
 - 什么都不改也不影响：默认行为只是把工具表变小，插件没改任何数据。
 
 ## License
